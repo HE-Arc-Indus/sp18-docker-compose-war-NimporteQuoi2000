@@ -1,0 +1,31 @@
+﻿# Je tourne avec docker compose 1.21 = https://docs.docker.com/compose/compose-file/#reference-and-guidelines
+# il parait que c'est du load-balancing, le replicated
+version: "3"
+services:
+  web:
+    image: tomcat:latest
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          cpus: "0.40"
+          memory: 4096M
+        reservations:
+          cpus: '0.25'
+          memory: 2048M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "80:8080"
+    networks:
+      - webnet
+# Quand j'essaie ce war à la maison, il ne donne rien (page blanche).
+# par contre il me crée un dossier du même nom avec plein de truc dedans
+# Mais si je commente, je vois la page par défaut du tomcat
+    volumes:
+      - ./webapps:/usr/local/tomcat/webapps
+#------------------------------------------------------------
+
+networks:
+  webnet:
